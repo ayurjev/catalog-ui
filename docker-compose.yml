@@ -1,0 +1,29 @@
+z9blog-ui:
+  image: z9blog-ui
+  links:
+   - z9img
+   - z9s3
+   - z9blog-api
+  ports:
+   - 8080:8080
+
+catalog-api:
+  image: hub.dev.repaem.ru:5000/catalog-api
+  links:
+   - mongo-posts:mongo
+
+mongo-posts:
+  image: mongo
+
+z9img:
+  image: z9img
+
+z9s3:
+  image: z9s3
+  environment:
+   - AWS_ACCESS_KEY_ID=AKIAIYH3UAYWYWFHSG7Q
+   - AWS_SECRET_ACCESS_KEY=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
+   - AWS_DEFAULT_REGION=eu-central-1
+   - S3BUCKET=mydockertest
+   - S3CONTENTTYPE=image/jpeg
+   - S3BUCKETURL=https://s3.eu-central-1.amazonaws.com/mydockertest/

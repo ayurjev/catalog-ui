@@ -1,0 +1,34 @@
+<rebase>bootstrap</rebase>
+<breakpoint name="Content">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <if condition="<var filter='length'>items</var> > 0">
+            <true>
+                <list for="item" in="items">
+                    <div class="post-in-feed">
+                        <h2><var>item.title</var></h2>
+                        <div><a href="#" class="pull-right">#<var d="БезРубрики">item.category</var></a></div>
+                        <p>
+                            <img src="<var>item.img</var>">
+                            <var d="" filter="html">item.short</var>
+                        </p>
+                        <div class="clearfix"></div>
+                        <div><a href="/edit/<var>item.id</var>/" class="pull-right"><i class="fa fa-edit"></i> Редактировать</a></div>
+                    </div>
+                    <hr />
+                </list>
+            </true>
+            <false>
+                <p class="text-center">Товаров в каталоге пока нет</p>
+            </false>
+        </if>
+
+    </div>
+    <div class="col-md-2"></div>
+
+</breakpoint>
+
+<style>
+    .post-in-feed.draft { opacity: 0.3; }
+    .post-in-feed img { max-width: 360px; float: left; margin-right: 20px; }
+</style>

@@ -1,0 +1,112 @@
+<div class="avatar avatar-container ui-container" data-template-name="avatar" data-upload-url="<var>upload_url</var>" data-aspect-ratio="<var>aspect_ratio</var>">
+    <if>
+        <condition><var filter="length">url</var> > 0</condition>
+        <true>
+            <img alt="image" class="avatar-preview img-responsive" src="<var filter='html'>url</var>" data-src="<var filter='html'>url</var>">
+        </true>
+        <false>
+            <img alt="image" class="avatar-preview img-responsive" src="http://dummyimage.com/600x400/e6e6e6/383838.png&text=Место+для+картинки" data-src="">
+        </false>
+    </if>
+    <a class="avatar-crop-btn btn" href="#"><i class="fa fa-crop"></i></a>
+    <div class="avatar-actions">
+        <a class="avatar-choose-file-link" href="#"><i class="fa fa-edit"></i>&nbsp;Загрузить фото</a>
+        <input class="avatar-file hidden" type="file">
+    </div>
+</div>
+
+
+<style>
+    .avatar-container { position: relative; z-index: 9; margin-bottom: 10px; }
+    .avatar-container .avatar-actions { display: none; position: absolute; bottom: 0; width: 100%; background-color: #333; opacity: 0.5; color: white; padding: 2px 4px; z-index: 1000; }
+    .avatar-container .avatar-actions a { color: white; }
+    .avatar-crop-btn { position: absolute; display: none; top: 0; right: 0; font-size: 24px; color: #FFFFFF !important; z-index: 1000; }
+    .avatar-container:hover .avatar-actions { display: block !important; }
+</style>
+
+
+<script>
+    (function(internal) {
+        internal.notifications = suit.template("notifications").api();
+        internal.ui.avatar_crop_btn = ".avatar-crop-btn";
+        internal.ui.avatar_choose_file_link = ".avatar-choose-file-link";
+        internal.ui.avatar_preview = ".avatar-preview";
+        internal.ui.avatar_file = ".avatar-file";
+
+        internal.jcrop = null;
+
+        internal.crop = function() {
+            if (!internal.crop_coords) return;
+            if ($(internal.ui.avatar_preview, internal.self).attr("src").indexOf("base64,") == -1) {
+                internal.notifications.warning(
+                        "Это изображение уже обрезано и обрезать его повторно нельзя, загрузите полную картинку повторно"
+                );
+                return;
+            }
+            suit.ajax(
+                    internal.self.attr("data-upload-url"),
+                    {
+                        "img": $(internal.ui.avatar_preview, internal.self).attr("src").split("base64,").pop(),
+                        "coords": internal.crop_coords,
+                        "from_size": {
+                            "w": $(internal.ui.avatar_preview, internal.self).width(),
+                            "h": $(internal.ui.avatar_preview, internal.self).height()
+                        }
+                    },
+                    function(data) {
+                        if (data.result) {
+                            $(internal.ui.avatar_preview, internal.self).attr("src", data.result.url);
+                            $(internal.ui.avatar_preview, internal.self).attr("data-src", data.result.url);
+                            $(internal.ui.avatar_preview, internal.self).css({"width": "100%", "height": "100%"});
+                            $(internal.ui.avatar_file).val("");
+                            $(internal.ui.avatar_crop_btn).hide();
+                            if (internal.jcrop) {
+                                internal.jcrop.release();
+                                internal.jcrop.destroy();
+                                internal.jcrop = null;
+                            }
+                        }
+                    }
+            );
+        };
+
+        internal.init_jcrop = function() {
+            var aspect_ratio = eval(internal.self.attr("data-aspect-ratio"));
+            var width = $(internal.ui.avatar_preview, internal.self).width();
+            if (internal.jcrop) internal.jcrop.destroy();
+            $(internal.ui.avatar_preview, internal.self).Jcrop({
+                        aspectRatio: aspect_ratio,
+                        onSelect: function(coords) { internal.crop_coords = coords; }
+                    }, function() {
+                        internal.jcrop = this;
+                        internal.jcrop.setSelect([0,0, width, (aspect_ratio)/width]);
+                        $(internal.ui.avatar_crop_btn).show();
+                    }
+            );
+        };
+
+        internal.api.createListeners = function() {
+            internal.connect(internal.ui.avatar_file, "change", function() {
+                if (this.files && this.files[0]) {
+                    var fr = new FileReader();
+                    fr.onloadend = function() {
+                        var base64 = fr.result.split("base64,")[1];
+                        $(internal.ui.avatar_preview, internal.self).attr("src", fr.result);
+                        $(internal.ui.avatar_preview, internal.self).attr("data-src", fr.result);
+                        internal.init_jcrop();
+                    };
+                    fr.readAsDataURL(this.files[0]);
+                }
+            });
+
+            internal.connect(internal.ui.avatar_choose_file_link, "click", function() {
+                $(internal.ui.avatar_file, internal.self).click();
+            });
+
+            internal.connect(internal.ui.avatar_crop_btn, "click", function() { internal.crop(); });
+        };
+
+        internal.api.on = internal.events_controller.on;
+
+    })
+</script>

@@ -1,0 +1,228 @@
+<div id="item_editor" class="ui-container" data-template-name="editor" data-item-id="<var d=''>item.id</var>">
+    <div class="container">
+        <div class="row">
+
+            <div id="sidebar" class="col-md-3">
+
+                <if condition="<var filter='length'>item.imgs[0]</var> > 0">
+                    <true><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4", "url": "<var>item.imgs[0]</var>"}</breakpoint></true>
+                    <false><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4"}</breakpoint></false>
+                </if>
+                <div class="clearfix"></div>
+
+                <if condition="<var filter='length'>item.imgs[1]</var> > 0">
+                    <true><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4", "url": "<var>item.imgs[1]</var>"}</breakpoint></true>
+                    <false><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4"}</breakpoint></false>
+                </if>
+                <div class="clearfix"></div>
+
+                <if condition="<var filter='length'>item.imgs[2]</var> > 0">
+                    <true><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4", "url": "<var>item.imgs[2]</var>"}</breakpoint></true>
+                    <false><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4"}</breakpoint></false>
+                </if>
+                <div class="clearfix"></div>
+
+                <if condition="<var filter='length'>item.imgs[3]</var> > 0">
+                    <true><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4", "url": "<var>item.imgs[3]</var>"}</breakpoint></true>
+                    <false><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4"}</breakpoint></false>
+                </if>
+                <div class="clearfix"></div>
+
+            </div>
+
+            <div id="content" class="site-content blog-details col-md-6">
+
+                <div class="form-group">
+                    <input type="text" class="title-input form-control" autocomplete="off" placeholder="Заголовок" value="<var d=''>item.title</var>">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" class="short-input form-control" autocomplete="off" placeholder="Краткий текст" value="<var d=''>item.short</var>">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" class="article-input form-control" autocomplete="off" placeholder="Артикул/код" value="<var d=''>item.article</var>">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" class="cost-input form-control" autocomplete="off" placeholder="Стоимость" value="<var d=''>item.cost</var>">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" class="quantity-input form-control" autocomplete="off" placeholder="Количество" value="<var d=''>item.quantity</var>">
+                </div>
+
+                <list for="attribute" in="attributes">
+                    <div class="form-group">
+                        <input type="text" class="attribute-input form-control" autocomplete="off" placeholder="<var>attribute.name</var>" data-attribute-id="<var>attribute.id</var>" data-regex="<var d=''>attribute.regex</var>" data-mask="<var d=''>attribute.mask</var>" value='
+                        <list for="item_attribute" in="item.attributes">
+                            <if>
+                                <condition><var>attribute.id</var> == <var>item_attribute.id</var></condition>
+                                <true><var>item_attribute.value</var></true>
+                            </if>
+                        </list>'>
+                    </div>
+                </list>
+
+                <div class="form-group tags_container" data-template-name="tags">
+                    <input class="tags-input" type="text" data-tags='<var d="[]">item.tags</var>' data-role="tagsinput" placeholder="Ключевые слова"/>
+                </div>
+
+                <div id="summernote">
+                    <if condition="<var filter='length'>item.body</var> > 0">
+                        <var filter="html">item.body</var>
+                    </if>
+                </div>
+
+                <hr />
+                <button id="save_btn" class="btn btn-primary">Сохранить</button>
+                <a class="delete_item_link">Удалить товар</a>
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="categories categories-container data-container" data-part-name="categories">
+                    <ul>
+                        <list for="category" in="categories">
+                            <li>
+                                <div class="checkbox">
+                                    <label>
+                                        <if>
+                                            <condition><var filter="in" in-data="<var>item.categories</var>">category.name</var></condition>
+                                            <true><input class="category-checkbox" type="checkbox" checked="checked" data-name="<var>category.name</var>" /> <var>category.name</var></true>
+                                            <false><input class="category-checkbox" type="checkbox" data-name="<var>category.name</var>" /> <var>category.name</var></false>
+                                        </if>
+                                    </label>
+                                </div>
+                            </li>
+                        </list>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #item_editor .categories ul { list-style: none; display: block; }
+    #item_editor .categories ul li { border-bottom: 1px dotted #C9C7C7; color: #575757; }
+    #item_editor .delete_item_link { float: right; color: red; font-size: 10px; font-weight: 100; }
+</style>
+
+<script>
+    (function (internal) {
+        internal.notifications = suit.template("notifications").api();
+
+        internal.ui.title_input = ".title-input";
+        internal.ui.article_input = ".article-input";
+        internal.ui.short_input = ".short-input";
+        internal.ui.cost_input = ".cost-input";
+        internal.ui.quantity_input = ".quantity-input";
+        internal.ui.img_element = ".avatar-preview";
+        internal.ui.tags_input = ".tags-input";
+        internal.ui.categories = ".category-checkbox";
+        internal.ui.summernote = "#summernote";
+        internal.ui.attribute_input = ".attribute-input";
+
+        internal.ui.save_btn = "#save_btn";
+        internal.ui.delete_item_link = ".delete_item_link";
+
+        internal.api.createListeners = function() {
+
+            $(internal.ui.tags_input, internal.self).tagsinput();
+            try {
+                $.each(JSON.parse($(internal.ui.tags_input, internal.self).attr("data-tags")), function (num, tag) {
+                    $(internal.ui.tags_input, internal.self).tagsinput('add', tag);
+                });
+            } catch (e) {}
+
+            $(internal.ui.summernote).summernote({
+                toolbar: [
+                    ['headline', ['style']],
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['Insert', ['picture', 'link', 'video', 'table', 'hr']]
+                ],
+                styleTags: ['p', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                height: 450,
+                placeholder: 'Пишите здесь...',
+                callbacks: {
+                    onImageUpload: function(files) {
+                        if (files && files[0]) {
+                            var fr = new FileReader();
+                            fr.onloadend = function() {
+                                var base64 = fr.result.split("base64,")[1];
+                                suit.ajax("/api/upload/", {"img": base64}, function(data) {
+                                    if (data.result) {
+                                        var node = $("<img src='"+data.result.url_800+"' style='width: 100%;' data-url-400='"+data.result.url_400+"' data-url-800='"+data.result.url_800+"'>")[0];
+                                        $(internal.ui.summernote).summernote("insertNode", node);
+                                    }
+                                });
+                            };
+                            fr.readAsDataURL(files[0]);
+                        }
+                    }
+                }
+            });
+
+            internal.connect(internal.ui.save_btn, "click", function() {
+                suit.ajax("/api/save/", internal.item_data(), function(data) {
+                    if (data.result) {
+                        internal.self.attr("data-item-id", data.result.item_id);
+                        internal.notifications.success("Изменения сохранены!");
+                        if("/edit/"+data.result.item_id+"/" != window.location){
+                            window.history.pushState(null, null, "/edit/"+data.result.item_id+"/");
+                        }
+                    }
+                });
+            });
+
+            internal.connect(internal.ui.delete_item_link, "click", function() {
+                suit.ajax("/api/delete_item/", internal.item_data(), function(data) {
+                    if (data.result) {
+                        location.href = "/feed/";
+                    }
+                });
+            });
+        };
+
+        internal.item_data = function() {
+            return {
+                "id": parseInt(internal.self.attr("data-item-id")) > 0  ? parseInt(internal.self.attr("data-item-id")) : null,
+                "title": $(internal.ui.title_input, internal.self).val(),
+                "article": $(internal.ui.article_input, internal.self).val(),
+                "cost": $(internal.ui.cost_input, internal.self).val(),
+                "quantity": $(internal.ui.quantity_input, internal.self).val(),
+                "short": $(internal.ui.short_input, internal.self).val(),
+                "imgs": function() {
+                    var arr = [];
+                    $(internal.ui.img_element, internal.self).each(function(num, img) {
+                        if ($(img).attr("data-src").length) {
+                            arr.push($(img).attr("data-src"));
+                        }
+                    });
+                    return arr;
+                }(),
+                "tags": $(internal.ui.tags_input, internal.self).tagsinput('items'),
+                "body": $(internal.ui.summernote, internal.self).summernote('code'),
+                "categories": function() {
+                    var arr = [];
+                    $(internal.ui.categories+":checked", internal.self).each(function(num, elem) {
+                       arr.push($(elem).attr("data-name"));
+                    });
+                    return arr;
+                }(),
+                "attributes": function() {
+                    var arr = [];
+                    var err = false;
+                    $(internal.ui.attribute_input, internal.self).each(function(num, input) {
+                        arr.push({"id": parseInt($(input).attr("data-attribute-id")), "value": $(input).val()});
+                    });
+                    return arr;
+                }()
+            }
+        };
+    })
+</script>

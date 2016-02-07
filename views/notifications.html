@@ -1,0 +1,86 @@
+<div id="notification" class="ui-container" data-template-name="notifications">
+    <div id="success" class="jumbotron alert alert-success hidden"><p class="text"></p></div>
+    <div id="info" class="jumbotron alert alert-info hidden"><p class="text"></p></div>
+    <div id="warning" class="jumbotron alert alert-warning hidden"><p class="text"></p></div>
+    <div id="error" class="jumbotron alert alert-danger hidden">
+        <h2>Ошибка!</h2>
+        <p class="text"></p><br />
+        <button class="btn btn-danger">Ok</button>
+    </div>
+</div>
+
+<style>
+    #notification .jumbotron { position: fixed; width: 33%; left: 33%; top: -5px; z-index: 2000; text-align: center; }
+    #notification .jumbotron p { font-size: 14px !important; }
+</style>
+
+<script>
+
+    (function(internal) {
+
+        internal.ui.success = "#success";
+        internal.ui.info = "#info";
+        internal.ui.warning = "#warning";
+        internal.ui.error = "#error";
+
+        internal.disapear_timeout = 3000;
+
+        internal.ui.dismisal_buttons = "#notification .jumbotron .btn";
+
+        internal.api.createListeners = function() {
+
+            suit.connect(suit.events_controller, "UnknownError", internal.self, function(data) {
+                internal.api.error("Неизвестная ошибка");
+            });
+
+            suit.connect(suit.events_controller, "XHR_Request_Completed", internal.self, function(data) {
+                if (!data.result) {
+                    if (data.error) {
+                        internal.api.error(data.error.message || data.error.type);
+                    }
+                }
+            });
+
+            suit.connect(internal.ui.dismisal_buttons, "click", function() {
+               $(this).parent().hide();
+            });
+
+        };
+
+        internal.api.success = function(msg, cb) {
+            $(internal.ui.success).find(".text").text(msg);
+            $(internal.ui.success).hide().removeClass("hidden").slideDown(200);
+            setTimeout(function() {
+                $(internal.ui.success).slideUp();
+                if (cb) cb();
+            }, internal.disapear_timeout);
+        };
+
+        internal.api.info = function(msg, cb) {
+            $(internal.ui.info).find(".text").text(msg);
+            $(internal.ui.info).hide().removeClass("hidden").slideDown(200);
+            setTimeout(function() {
+                $(internal.ui.info).slideUp();
+                 if (cb) cb();
+            }, internal.disapear_timeout);
+        };
+
+        internal.api.warning = function(msg, cb) {
+            $(internal.ui.warning).find(".text").text(msg);
+            $(internal.ui.warning).hide().removeClass("hidden").slideDown(200);
+            setTimeout(function() {
+                $(internal.ui.warning).slideUp();
+                if (cb) cb();
+            }, internal.disapear_timeout);
+        };
+
+        internal.api.error = function(msg) {
+            $(internal.ui.error).find(".text").text(msg);
+            $(internal.ui.error).removeClass("hidden").show();
+        };
+
+        return internal;
+
+    })
+
+</script>
