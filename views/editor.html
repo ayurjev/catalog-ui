@@ -3,58 +3,50 @@
         <div class="row">
 
             <div id="sidebar" class="col-md-3">
-
-                <if condition="<var filter='length'>item.imgs[0]</var> > 0">
-                    <true><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4", "url": "<var>item.imgs[0]</var>"}</breakpoint></true>
-                    <false><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4"}</breakpoint></false>
-                </if>
+                <list for="img" in="item.imgs">
+                    <breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4", "url_small": "<var>img.small</var>", "url_big": "<var>img.big</var>"}</breakpoint>
+                    <div class="clearfix"></div>
+                </list>
+                <breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4"}</breakpoint>
                 <div class="clearfix"></div>
-
-                <if condition="<var filter='length'>item.imgs[1]</var> > 0">
-                    <true><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4", "url": "<var>item.imgs[1]</var>"}</breakpoint></true>
-                    <false><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4"}</breakpoint></false>
-                </if>
-                <div class="clearfix"></div>
-
-                <if condition="<var filter='length'>item.imgs[2]</var> > 0">
-                    <true><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4", "url": "<var>item.imgs[2]</var>"}</breakpoint></true>
-                    <false><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4"}</breakpoint></false>
-                </if>
-                <div class="clearfix"></div>
-
-                <if condition="<var filter='length'>item.imgs[3]</var> > 0">
-                    <true><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4", "url": "<var>item.imgs[3]</var>"}</breakpoint></true>
-                    <false><breakpoint include="avatar">{"upload_url": "/api/crop/", "aspect_ratio": "4/4"}</breakpoint></false>
-                </if>
-                <div class="clearfix"></div>
-
             </div>
 
             <div id="content" class="site-content blog-details col-md-6">
 
-                <div class="form-group">
-                    <input type="text" class="title-input form-control" autocomplete="off" placeholder="Заголовок" value="<var d=''>item.title</var>">
+                <div class="input-group">
+                    <div class="input-group-addon">Заголовок</div>
+                    <input type="text" class="title-input form-control" autocomplete="off" value="<var d=''>item.title</var>">
                 </div>
 
-                <div class="form-group">
-                    <input type="text" class="short-input form-control" autocomplete="off" placeholder="Краткий текст" value="<var d=''>item.short</var>">
+                <div class="input-group">
+                    <div class="input-group-addon">Краткий текст</div>
+                    <input type="text" class="short-input form-control" autocomplete="off" value="<var d=''>item.short</var>">
                 </div>
 
-                <div class="form-group">
-                    <input type="text" class="article-input form-control" autocomplete="off" placeholder="Артикул/код" value="<var d=''>item.article</var>">
+                <div class="input-group">
+                    <div class="input-group-addon">Артикул/код</div>
+                    <input type="text" class="article-input form-control" autocomplete="off" value="<var d=''>item.article</var>">
                 </div>
 
-                <div class="form-group">
-                    <input type="text" class="cost-input form-control" autocomplete="off" placeholder="Стоимость" value="<var d=''>item.cost</var>">
+                <div class="input-group">
+                    <div class="input-group-addon">Стоимость</div>
+                    <input type="text" class="cost-input form-control" autocomplete="off" value="<var d=''>item.cost</var>">
                 </div>
 
-                <div class="form-group">
-                    <input type="text" class="quantity-input form-control" autocomplete="off" placeholder="Количество" value="<var d=''>item.quantity</var>">
+                <div class="input-group">
+                    <div class="input-group-addon">Скидка</div>
+                    <input type="text" class="discount-input form-control" autocomplete="off" value="<var d=''>item.discount</var>">
+                </div>
+
+                <div class="input-group">
+                    <div class="input-group-addon">Количество</div>
+                    <input type="text" class="quantity-input form-control" autocomplete="off" value="<var d=''>item.quantity</var>">
                 </div>
 
                 <list for="attribute" in="attributes">
-                    <div class="form-group">
-                        <input type="text" class="attribute-input form-control" autocomplete="off" placeholder="<var>attribute.name</var>" data-attribute-id="<var>attribute.id</var>" data-regex="<var d=''>attribute.regex</var>" data-mask="<var d=''>attribute.mask</var>" value='
+                    <div class="input-group">
+                        <div class="input-group-addon"><var>attribute.name</var></div>
+                        <input type="text" class="attribute-input form-control" autocomplete="off" data-attribute-id="<var>attribute.id</var>" data-regex="<var d=''>attribute.regex</var>" data-mask="<var d=''>attribute.mask</var>" value='
                         <list for="item_attribute" in="item.attributes">
                             <if>
                                 <condition><var>attribute.id</var> == <var>item_attribute.id</var></condition>
@@ -108,6 +100,8 @@
     #item_editor .categories ul { list-style: none; display: block; }
     #item_editor .categories ul li { border-bottom: 1px dotted #C9C7C7; color: #575757; }
     #item_editor .delete_item_link { float: right; color: red; font-size: 10px; font-weight: 100; }
+    #item_editor .input-group { margin-bottom: 5px; }
+    #item_editor .input-group-addon { min-width: 122px; font-size: 12px; }
 </style>
 
 <script>
@@ -118,6 +112,7 @@
         internal.ui.article_input = ".article-input";
         internal.ui.short_input = ".short-input";
         internal.ui.cost_input = ".cost-input";
+        internal.ui.discount_input = ".discount-input";
         internal.ui.quantity_input = ".quantity-input";
         internal.ui.img_element = ".avatar-preview";
         internal.ui.tags_input = ".tags-input";
@@ -194,13 +189,14 @@
                 "title": $(internal.ui.title_input, internal.self).val(),
                 "article": $(internal.ui.article_input, internal.self).val(),
                 "cost": $(internal.ui.cost_input, internal.self).val(),
+                "discount": $(internal.ui.discount_input, internal.self).val(),
                 "quantity": $(internal.ui.quantity_input, internal.self).val(),
                 "short": $(internal.ui.short_input, internal.self).val(),
                 "imgs": function() {
                     var arr = [];
                     $(internal.ui.img_element, internal.self).each(function(num, img) {
                         if ($(img).attr("data-src").length) {
-                            arr.push($(img).attr("data-src"));
+                            arr.push({"small": $(img).attr("data-src"), "big": $(img).attr("data-src-big")});
                         }
                     });
                     return arr;

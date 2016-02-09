@@ -1,8 +1,8 @@
 <div class="avatar avatar-container ui-container" data-template-name="avatar" data-upload-url="<var>upload_url</var>" data-aspect-ratio="<var>aspect_ratio</var>">
     <if>
-        <condition><var filter="length">url</var> > 0</condition>
+        <condition><var filter="length">url_small</var> > 0</condition>
         <true>
-            <img alt="image" class="avatar-preview img-responsive" src="<var filter='html'>url</var>" data-src="<var filter='html'>url</var>">
+            <img alt="image" class="avatar-preview img-responsive" src="<var filter='html'>url_small</var>" data-src="<var filter='html'>url_small</var>" data-src-big="<var filter='html'>url_big</var>">
         </true>
         <false>
             <img alt="image" class="avatar-preview img-responsive" src="http://dummyimage.com/600x400/e6e6e6/383838.png&text=Место+для+картинки" data-src="">
@@ -57,6 +57,7 @@
                         if (data.result) {
                             $(internal.ui.avatar_preview, internal.self).attr("src", data.result.url);
                             $(internal.ui.avatar_preview, internal.self).attr("data-src", data.result.url);
+                            $(internal.ui.avatar_preview, internal.self).attr("data-src-big", data.result.url_800);
                             $(internal.ui.avatar_preview, internal.self).css({"width": "100%", "height": "100%"});
                             $(internal.ui.avatar_file).val("");
                             $(internal.ui.avatar_crop_btn).hide();
@@ -93,6 +94,7 @@
                         var base64 = fr.result.split("base64,")[1];
                         $(internal.ui.avatar_preview, internal.self).attr("src", fr.result);
                         $(internal.ui.avatar_preview, internal.self).attr("data-src", fr.result);
+                        $(internal.ui.avatar_preview, internal.self).attr("data-src-big", fr.result);
                         internal.init_jcrop();
                     };
                     fr.readAsDataURL(this.files[0]);

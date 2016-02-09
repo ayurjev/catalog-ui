@@ -99,8 +99,12 @@ class ApiController(Controller):
         """
         payload = {"base64": request.get("img"), "coords": request.get("coords"), "from_size": request.get("from_size")}
         cropped_base64 = microservice("http://img/crop", payload, "base64")
+        resized_base64_800 = microservice("http://img/scale", {"base64": cropped_base64, "size": 800}, "base64")
         resized_base64_400 = microservice("http://img/scale", {"base64": cropped_base64, "size": 400}, "base64")
-        return {"url": microservice("http://s3/upload", {'base64': resized_base64_400}, "url")}
+        return {
+            "url": microservice("http://s3/upload", {'base64': resized_base64_400}, "url"),
+            "url_800": microservice("http://s3/upload", {'base64': resized_base64_800}, "url")
+        }
 
     @staticmethod
     def upload(request: Request, *args, **kwargs):
@@ -142,6 +146,7 @@ class ApiController(Controller):
             "short": request.get("short", False),
             "imgs": request.get("imgs", []),
             "cost": request.get("cost", 0),
+            "discount": request.get("discount", 0),
             "quantity": request.get("quantity", 0),
             "attributes": request.get("attributes", [])
         }
